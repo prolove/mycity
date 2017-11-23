@@ -1,0 +1,61 @@
+{extend name="public/base" /}
+
+{block name="body"}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="btn ajax-get iframe btn-info" url="{:url('add')}"><i class="fa fa-fw fa-plus"></i>新增</div>
+        <div id="nestable-menu" data-action="collapse-all" class="btn bg-teal">收起所有</div>
+    </div>
+    <div class="col-md-6 col-sm-12 col-xs-12" >
+        <div class="dd" id="nestable2">
+            <ol class="dd-list">
+                {:action('category/tree', array($tree))}
+            </ol>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+<link href="__PUBLIC__/static/nestable/jquery.nestable.css" rel="stylesheet">
+<script src="__PUBLIC__/static/nestable/jquery.nestable.js"></script>
+<script>
+    highlight_subnav('{:url("index")}');
+    $(document).ready(function() {
+        $("#nestable2").nestable({
+            group: 1,
+            callback: function(l,e){
+                var id = $(e).attr('data-id'),
+                    pid = $(e).parent().parent('li').attr('data-id'),
+                    sort = $(e).prev().attr('data-id');
+                if(sort == "" || sort == undefined || sort == null){
+                    sort = 0;
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: "{:url('index')}",
+                    data:{"id":id,"pid":pid,"sort":sort},
+                    success: function (data) {
+                        if(data.code){
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+            }
+        });
+        $("#nestable-menu").on("click",function(e) {
+                var action = $(this).attr("data-action");
+                if (action === "expand-all") {
+                    $(".dd").nestable("expandAll");
+                    $(this).attr("data-action","collapse-all");
+                    $(this).html("收起所有");
+                }
+                if (action === "collapse-all") {
+                    $(".dd").nestable("collapseAll")
+                    $(this).attr("data-action","expand-all");
+                    $(this).html("展开所有");
+                }
+        });
+    });
+</script>
+{/block}

@@ -1,0 +1,32 @@
+{volist name=":parse_field_attr($data['field_group'])" id="vo"}
+<div class="form-item cf edit_sort edit_sort_l form_field_sort">
+    <span>{$vo}</span>
+    <ul class="dragsort needdragsort" data-group="{$key}">
+        {foreach name="fields" item="field" key="k"}
+        <?php isset($field['group']) ? $field['group'] : $field['group'] ='1' ;?>
+
+        {if condition="(($field['group'] eq $key) or($i eq 1 and !isset($field['group']))) and ($field['is_show'] neq 0)"}
+        <li class="getSort">
+            <em data="{$field['id']}">{$field['title']} [{$field['name']}]</em>
+            <input type="hidden" name="field_sort[{$key}][]" value="{$field['id']}"/>
+        </li>
+        {/if}
+        {/foreach}
+    </ul>
+</div>
+{/volist}
+<script type="text/javascript" src="__PUBLIC__/admin/js/jquery.dragsort-0.5.2.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+    //拖曳插件初始化
+    $(function(){
+        $(".needdragsort").dragsort({
+            dragSelector:'li',
+            placeHolderTemplate: '<li class="draging-place">&nbsp;</li>',
+            dragBetween:true,	//允许拖动到任意地方
+            dragEnd:function(){
+                var self = $(this);
+                self.find('input').attr('name', 'field_sort[' + self.closest('ul').data('group') + '][]');
+            }
+        });
+    })
+</script>

@@ -1,0 +1,113 @@
+{extend name="public/base"/}
+
+{block name="header"}
+    <li class="active"><a>安装协议<span class="caret"></span></a></li>
+    <li class="active"><a>环境检测<span class="caret"></span></a></li>
+    <li class="active"><a>创建数据<span class="caret"></span></a></li>
+    <li><a>{eq name="Think.session.update" value="1"}升级{else/}安装{/eq}<span class="caret"></span></a></li>
+    <li><a>完成<span class="caret"></span></a></li>
+{/block}
+
+{block name="body"}
+<div class="row">
+    <?php
+        defined('SAE_MYSQL_HOST_M') or define('SAE_MYSQL_HOST_M', '127.0.0.1');
+        defined('SAE_MYSQL_HOST_M') or define('SAE_MYSQL_PORT', '3306');
+    ?>
+    <h1>创建数据库</h1>
+    <form action="" method="post" target="_self">
+        <div class="col-xs-12 form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">数据库类型</label>
+                <div class="col-sm-3">
+                    <select class="form-control" name="db[]">
+                        <option>mysql</option>
+                    </select>
+                </div>
+                <div class="col-sm-7"></div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">数据库地址</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" name="db[]" value="{defined name='SAE_MYSQL_HOST_M'}{$Think.const.SAE_MYSQL_HOST_M}{else/}127.0.0.1{/defined}">
+                </div>
+                <div class="col-sm-7  text-left control-label">数据库服务器，数据库服务器IP，一般为127.0.0.1</div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">数据库名</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" name="db[]" value="{defined name='SAE_MYSQL_DB'}{$Think.const.SAE_MYSQL_DB}{else/}twothink{/defined}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">数据库用户名</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" name="db[]" value="{defined name='SAE_MYSQL_USER'}{$Think.const.SAE_MYSQL_USER}{else/}root{/defined}">
+                </div>
+            </div>
+            <div  class="form-group">
+                <label class="col-sm-2 control-label">数据库密码</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" name="db[]" value="{defined name='SAE_MYSQL_PASS'}{$Think.const.SAE_MYSQL_PASS}{/defined}">
+                </div>
+            </div>
+            <div  class="form-group">
+                <label class="col-sm-2 control-label">数据库端口</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" name="db[]" value="{defined name='SAE_MYSQL_PORT'}{$Think.const.SAE_MYSQL_PORT}{else/}3306{/defined}">
+                </div>
+                <div class="col-sm-7  text-left control-label">数据库服务连接端口，一般为3306</div>
+            </div>
+            <div  class="form-group">
+                <label class="col-sm-2 control-label">数据表前缀</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" name="db[]" value="twothink_">
+                </div>
+                <div class="col-sm-7  text-left control-label">同一个数据库运行多个系统时请修改为不同的前缀</div>
+            </div>
+        </div>
+
+        <div class="col-xs-12 form-horizontal">
+            <div  class="form-group">
+                <label class="col-sm-2 control-label"></label>
+                <div class="col-sm-10"><h2>创始人帐号信息</h2></div>
+            </div>
+            <div  class="form-group">
+                <label class="col-sm-2 control-label">用户名</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" name="admin[]" value="admin">
+                </div>
+            </div>
+            <div  class="form-group">
+                <label class="col-sm-2 control-label">密码</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="password" name="admin[]" value="">
+                </div>
+            </div>
+            <div  class="form-group">
+                <label class="col-sm-2 control-label">确认密码</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="password" name="admin[]" value="">
+                </div>
+            </div>
+            <div  class="form-group">
+                <label class="col-sm-2 control-label">邮箱</label>
+                <div class="col-sm-3">
+                    <input class="form-control" type="text" name="admin[]" value="admin@admin.com">
+                </div>
+                <div class="col-sm-7  text-left control-label">请填写正确的邮箱便于收取提醒邮件</div>
+            </div>
+        </div>
+    </form>
+</div>
+<style>
+    input, select{
+        color: black;
+    }
+</style>
+{/block}
+
+{block name="footer"}
+    <a class="btn btn-success btn-large" href="{:url('Install/step1')}">上一步</a>
+    <button id="submit" type="button" class="btn btn-primary btn-large" onclick="$('form').submit();return false;">下一步</button>
+{/block}

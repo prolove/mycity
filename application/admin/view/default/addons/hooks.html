@@ -1,0 +1,57 @@
+{extend name="public/base" /}
+{block name="content-header"}
+	<h5><i class="fa fa-fw fa-connectdevelop"></i> 钩子列表</h5>
+</block>
+
+{block name="body"}
+<div class="row">
+	<div class="col-xs-12">
+		<!-- 标题栏 -->
+		<div>
+			<?php if (IS_ROOT): ?>
+				<div class="btn btn-sm btn-success ajax-get iframe" href="{:url('addhook')}"><i class="fa fa-fw fa-plus"></i> 新 增</div>
+			<?php endif ?>
+		</div>
+		<!-- 数据列表 -->
+		<div class="table-responsive margin-top-5">
+			<table class="table table-bordered table-striped table-hover">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>名称</th>
+						<th>描述</th>
+						<th>类型</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					{volist name="list" id="vo"}
+						<tr>
+							<td>{$vo.id}</td>
+							<td><a href="{:url('edithook?id='.$vo['id'])}">{$vo.name}</a></td>
+							<td>{$vo.description}</td>
+							<td>{$vo.type_text}</td>
+							<td>
+								<a class="ajax-get iframe btn btn-xs btn-success" title="编辑" href="{:url('edithook?id='.$vo['id'])}"><i class="fa fa-fw fa-edit"></i></a>
+								<a class="confirm ajax-get btn btn-xs btn-danger" title="删除" href="{:url('delhook?id='.$vo['id'])}"><i class="fa fa-fw fa-trash"></i></a>
+							</td>
+						</tr>
+					{/volist}
+				</tbody>
+			</table>
+		</div>
+		<!-- 分页 -->
+		<div class="page">
+			{$_page}
+		</div>
+	</div>
+</div>
+{/block}
+
+{block name="script"}
+	<script type="text/javascript">
+		$(function(){
+            highlight_subnav('{:url("addons/hooks")}');
+		})
+	</script>
+{/block}

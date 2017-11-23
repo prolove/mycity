@@ -1,0 +1,12 @@
+<div class="form-item cf edit_sort edit_sort_l form_field_sort">
+							<span>字段列表 		[ <a href="{:url('Attribute/add?model_id='.$data['id'])}" target="_balnk">新增</a>
+							<a href="{:url('Attribute/index?model_id='.$data['id'])}" target="_balnk">管理</a> ] </span>
+    <ul class="dragsort">
+        {foreach name="fields" item="field" key="k"}
+        <li >
+            <em >
+                <input class="ids" lay-skin="primary" type="checkbox" name="attribute_list[]" value="{$field['id']}"/> {$field['title']} [{$field['name']}]</em>
+        </li>
+        {/foreach}
+    </ul>
+</div>

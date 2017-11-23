@@ -1,0 +1,15 @@
+<select name="type" id="data-type">
+    <option value="">----请选择----</option>
+    {volist name=":get_attribute_type()" id="type"}
+    <option value="{$key}" rule="{$type[1]}" {eq name="data['type']" value="$key"}selected{/eq}>{$type[0]}</option>
+    {/volist}
+</select>
+<script>
+    {eq name=":request()->action()" value="add"}
+    $(function(){
+        $('#data-type').change(function(){
+            $("input[name='field']").val($(this).find('option:selected').attr('rule'));
+        });
+    })
+    {/eq}
+</script>

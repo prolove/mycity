@@ -1,0 +1,80 @@
+{extend name="public/base" /}
+{block name="content-header"}
+<h5><i class="fa fa-fw fa-connectdevelop"></i>  数据还原</h5>
+{/block}
+{block name="body"}
+<div class="row">
+    <div class="col-xs-12">
+        <!-- 应用列表 -->
+        <div class="data-table table-striped">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th width="200">备份名称</th>
+                        <th width="80">卷数</th>
+                        <th width="80">压缩</th>
+                        <th width="80">数据大小</th>
+                        <th width="200">备份时间</th>
+                        <th>状态</th>
+                        <th width="120">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {volist name="list" id="data"}
+                        <tr>
+                            <td>{$data.time|date='Ymd-His',###}</td>
+                            <td>{$data.part}</td>
+                            <td>{$data.compress}</td>
+                            <td>{$data.size|format_bytes}</td>
+                            <td>{$key}</td>
+                            <td>-</td>
+                            <td class="action">
+                                <a class="db-import btn btn-xs bg-teal" href="{:url('import?time='.$data['time'])}">还原</a>&nbsp;
+                                <a class="ajax-get confirm btn btn-xs bg-red" href="{:url('del?time='.$data['time'])}">删除</a>
+                            </td>
+                        </tr>
+                    {/volist}
+                </tbody>
+            </table>
+        </div>
+        <!-- /应用列表 -->
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+    <script type="text/javascript">
+        highlight_subnav('{:url("index",["type"=>$type])}');
+        $(".db-import").click(function(){
+            var self = this, code = ".";
+            $.get(self.href, success, "json");
+            window.onbeforeunload = function(){ return "正在还原数据库，请不要关闭！" }
+            return false;
+        
+            function success(data){
+                if(data.code){
+                    if(data.data.gz){
+                        data.msg += code;
+                        if(code.length === 5){
+                            code = ".";
+                        } else {
+                            code += ".";
+                        }
+                    }
+                    $(self).parent().prev().text(data.msg);
+                    if(data.data.part){
+                        $.get(self.href, 
+                            {"part" : data.data.part, "start" : data.data.start}, 
+                            success, 
+                            "json"
+                        );
+                    }  else {
+                        window.onbeforeunload = function(){ return null; }
+                    }
+                } else {
+                    layer.msg(data.msg, {icon: 5});
+                }
+            }
+        });
+    </script>
+{/block}

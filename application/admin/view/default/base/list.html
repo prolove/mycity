@@ -1,0 +1,198 @@
+{extend name="public/base" /}
+{block name="style"}
+{/block}
+{block name="body"}
+<div class="row">
+
+    <div class="col-md-6 col-sm-12 col-xs-12 margin-bottom-5">
+        <!-- 按钮组 -->
+        <div class="two-btn">
+            {notempty name="model_info.button"}
+            {volist name="model_info.button" id="button"}
+            {present name="button['type']"}
+            <div class="btn-group" role="group">
+                <button type="button" class="btn {$button.class} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {$button.title}
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    {volist name="button.extra" id="extra"}
+                    <li><a href="{$extra.url|url}">{$extra.title}</a></li>
+                    {/volist}
+                </ul>
+            </div>
+            {else /}
+            <div type="button" class="btn btn-sm {$button.class}" url="{$button.url|url}" {$button.ExtraHTML}><i class="{$button.icon}"></i>{$button.title}</div>
+            {/present}
+            {/volist}
+            {/notempty}
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12 col-xs-12 margin-bottom-5">
+        <!-- 搜索 -->
+        <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group" role="group" aria-label="First group">
+                <input id="like_seach" class="btn btn-default" type="text" placeholder="模糊搜索">
+                <button id="seach" type="button" class="btn btn-default" title="搜索"><i class="glyphicon glyphicon-search text-success"></i></button>
+                <button id="seach_all" type="button" class="btn btn-default" title="添加搜索条件"><i class="glyphicon glyphicon-plus text-success"></i></button>
+            </div>
+        </div>
+    </div>
+    <!-- 高级搜索条件 -->
+    <div class="col-xs-12 margin-bottom-5">
+        <div class="pull-right">
+            <form id="data-seach-Form">
+                <div class="btn-toolbar seach_all" role="toolbar" aria-label="Toolbar with button groups">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-xs-12">
+        <!-- DataTables 表格 -->
+        <table id="table_id_one" class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr>
+                <th class="row-selected row-selected"><input class="check-all" type="checkbox"></th>
+                {volist name="model_info.list_field" id="vo"}
+                <th>{$vo.title}</th>
+                {/volist}
+            </tr>
+            </thead>
+            <tbody>
+        </table>
+    </div>
+</div>
+
+<!-- DataTables 插件  -->
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/static/datatables/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="__PUBLIC__/static/datatables/js/jquery.dataTables.js"></script>
+<!-- DtataTables 扩展 -->
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/static/datatables/buttons/css/buttons.dataTables.min.css">
+<script type="text/javascript" charset="utf8" src="__PUBLIC__/static/datatables/buttons/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" charset="utf8" src="__PUBLIC__/static/datatables/buttons/js/buttons.flash.min.js"></script>
+<script type="text/javascript" charset="utf8" src="__PUBLIC__/static/datatables/jszip/jszip.min.js"></script>
+<script type="text/javascript" charset="utf8" src="__PUBLIC__/static/datatables/buttons/js/buttons.html5.min.js"></script>
+<script type="text/javascript" charset="utf8" src="__PUBLIC__/static/datatables/buttons/js/buttons.print.min.js"></script>
+<script type="text/javascript" charset="utf8" src="__PUBLIC__/static/datatables/buttons/js/buttons.colVis.min.js"></script>
+<script type="text/javascript" charset="utf8" src="__PUBLIC__/static/datatables/page/input.js"></script>
+
+<script>
+    $(function(){
+        $("[data-toggle='popover']").popover();
+        var data_table = $('#table_id_one').DataTable({
+            searching : false, //去掉搜索框
+            serverSide: true,//开启服务器模式
+            pagingType : "input",
+            dom: 'Bfrtip',
+            buttons: ['colvis','copy', 'csv', 'excel', 'pdf', 'print','pageLength'],
+            lengthMenu: [
+                [ 5, 10, 25, 50, -1 ],
+                ['5', '10', '25', '50', '显示所有' ]
+            ],
+            ajax: {
+                type: 'POST',
+                url: '{$model_info["url"]}',
+                dataSrc: "data",
+                data:function(d){
+                    d.seach_all = JSON.stringify(getFormJson('#data-seach-Form'));
+                    d.like_seach= $("#like_seach").val();
+                    d.page = pagenew();
+                    {volist name=":request()->param()" id="value"}
+                    d.{$key}='{$value}';
+                    {/volist}
+                    }
+                },
+                language: {
+                    buttons: {
+                        colvis: "列(显示/隐藏)",
+                        copy: "复制",
+                        print: "打印",
+                        pageLength:{
+                            "_":"显示 %d 条",
+                            "-1": "显示所有"
+                        }
+                    },
+                    "sProcessing": "处理中...",
+                    "sLengthMenu": "每页显示 _MENU_ 条",
+                    "sZeroRecords": "没有匹配结果",
+                    "sInfo": "显示第 _START_ 至 _END_ 条数据，共 _TOTAL_ 条",
+                    "sInfoEmpty": "显示第 0 至 0 条数据，共 0 条",
+                    "sInfoFiltered": "(由 _MAX_ 条数据过滤)",
+                    "sInfoPostFix": "",
+                    "sSearch": "搜索:",
+                    "sUrl": "",
+                    "sEmptyTable": "表中数据为空",
+                    "sLoadingRecords": "载入中...",
+                    "sInfoThousands": ",",
+                    "oPaginate": {
+                        "sFirst": "首页",
+                        "sPrevious": "上页",
+                        "sNext": "下页",
+                        "sLast": "末页"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": 以升序排列此列",
+                        "sSortDescending": ": 以降序排列此列"
+                    }
+                },
+                "fnDrawCallback":function(obj){
+//                    datatables_ui();
+                },
+                "aoColumnDefs": [{ "bSortable": false, "aTargets": [0]}],
+                "aaSorting": [[1, "desc"]],
+                columns:[
+                    {
+                        sClass: "text-center",
+                        data: "1",
+                        render: function (data, type, full, meta) {
+                            return '<input class="ids" name="ids[]" value="'+data+'" type="checkbox">';
+                        }
+                    },
+                    {volist name="model_info.list_field" id="vo"  key="k"}
+                    {
+                        data:"{$k}",
+                        orderable:{$vo.sort|default='true'}
+            },
+        {/volist}
+        ]
+        });
+        $("#seach").click(function(){
+            //reload效果与draw(true)或者draw()类似,draw(false)则可在获取新数据的同时停留在当前页码,可自行试验
+            data_table.draw();
+        });
+        $("#adv-sch-pannel").click(function () {
+            $("#adv-sch-pannel-tab").toggle();
+        });
+        //添加搜索条件
+        $("#seach_all").click(function () {
+            var html = '';
+            html += '<div class="btn-group margin-bottom-5" role="group" aria-label="First group">';
+            html += '<select name="seach_all_name" class="btn btn-default">';
+            {volist name="model_info.search_list" id="vo"};
+            html += '<option value="{$key}">{$vo}</option>';
+            {/volist}
+                html += '</select>';
+                html += '<select name="seach_all_type" class="btn btn-default">';
+                html += '<option value="eq" selected="selected">等于</option><option value="ne">不等</option><option value="lt">小于</option><option value="le">小于等于</option><option value="gt">大于</option><option value="ge">大于等于</option><option value="cn">包含</option>';
+                html += '</select>';
+                html += '<input name="seach_all_value" class="btn btn-default" type="text" placeholder="请输入搜索内容">';
+                html += '<button type="button" class="btn btn-default seach_all_delte" title="删除"><i class="glyphicon glyphicon-remove text-danger"></i></button>';
+                html += '</div>';
+                $(".seach_all").append(html);
+            });
+        //删除搜索条件
+        $(document).on("click",".seach_all_delte",function(){
+            $(this).parents('.btn-group').remove();
+        })
+        //当前点击或输入页码
+        function pagenew() {
+            var page = 0;
+            if(data_table){
+                page = data_table.page();
+            }
+            return page+1;
+        }
+    } );
+</script>
+{/block}

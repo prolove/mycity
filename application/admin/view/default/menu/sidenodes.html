@@ -1,0 +1,18 @@
+
+{volist name="tree" id="menu"}
+    {notempty name="menu['_child']"}
+        <li class="treeview menu-open">
+            <a href="#">
+                <i class="fa fa-book"></i> <span>{$menu.title}</span>
+                <span class="pull-right-container">
+                  <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu" style="display: block;">
+                {:action('Menu/sidetree', array($menu['_child'],'menu/sidenodes'))}
+            </ul>
+        </li>
+    {else/}
+        <li><a href="{$menu.url|url}"><i class="fa fa-circle-o"></i>{$menu.title}</a></li>
+    {/notempty}
+{/volist}

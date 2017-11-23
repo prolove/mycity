@@ -1,0 +1,14 @@
+{extend name="public/base"/}
+
+{block name="body"}
+    <div class="col-xs-9">
+        {volist name="news_menu['_']" id="news"}
+            <a href="news/{$news['name']}">{$news['title']}</a>
+        {/volist}
+        <!-- Contents
+        ================================================== -->
+        <section id="contents">
+
+        </section>
+    </div>
+{/block}

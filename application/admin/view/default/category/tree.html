@@ -1,0 +1,21 @@
+{volist name="tree" id="list"}
+<li class="dd-item dd-item-alt" data-id="{$list.id}">
+    <div class="dd-handle"><i class="fa fa-arrows" aria-hidden="true"></i></div>
+    <div class="dd-content">
+        <span class="pull-right">
+            <a class="ajax-get iframe btn btn-xs bg-aqua" title="新增" href="{:url('add?pid='.$list['id'])}">新增</a>
+            <a class="ajax-get iframe btn btn-xs bg-teal" title="编辑" href="{:url('edit?id='.$list['id'].'&pid='.$list['pid'])}">编辑</a>
+            <a title="{$list.status|show_status_op}" href="{:url('setStatus?ids='.$list['id'].'&status='.abs(1-$list['status']))}" class="ajax-get btn btn-xs bg-yellow">{$list.status|show_status_op}</a>
+            <a class="confirm ajax-get btn btn-xs bg-red" title="删除" href="{:url('remove?id='.$list['id'])}">删除</a>
+            <a class="ajax-get iframe btn btn-xs bg-teal" title="合并" href="{:url('operate?type=merge&from='.$list['id'])}">合并</a>
+        </span>
+        <span class="label label-info"><i class="fa fa-cog"></i></span>
+        <span>{$list.title}</span>
+    </div>
+    {notempty name="list['_']"}
+    <ol class="dd-list">
+        {:action('Category/tree', array($list['_']))}
+    </ol>
+    {/notempty}
+</li>
+{/volist}

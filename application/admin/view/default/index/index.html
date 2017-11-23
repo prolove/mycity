@@ -1,0 +1,22 @@
+{extend name="public/base" /}
+
+{block name="sidebar"}{/block}
+
+{block name="style"}
+<style>
+    .main-sidebar{
+        display: none;
+    }
+    .content-wrapper, .main-footer {
+        margin-left: 0px !important;
+    }
+</style>
+{/block}
+
+{block name="body"}
+<!-- 主体 -->
+<section class="content">
+    <!-- 插件块 -->
+    <div class="row">{:hook('AdminIndex')}</div>
+</section>
+{/block}

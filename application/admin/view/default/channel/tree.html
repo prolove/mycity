@@ -1,0 +1,20 @@
+{volist name="tree" id="list"}
+<li class="dd-item dd-item-alt" data-id="{$list.id}">
+    <div class="dd-handle"><i class="fa fa-arrows" aria-hidden="true"></i></div>
+    <div class="dd-content">
+        <span class="pull-right">
+            <a class="ajax-get iframe btn btn-xs bg-aqua" title="新增" href="{:url('add?pid='.$list['id'])}">新增</a>
+            <a class="ajax-get iframe btn btn-xs bg-teal" title="编辑" href="{:url('edit?id='.$list['id'].'&pid='.$list['pid'])}">编辑</a>
+            <a class="ajax-get btn btn-xs bg-yellow" title="{$list.status|show_status_op}" href="{:url('setStatus?ids='.$list['id'].'&status='.abs(1-$list['status']))}">{$list.status|show_status_op}</a>
+            <a class="confirm ajax-get btn btn-xs btn-danger" title="删除" href="{:url('del?id='.$list['id'])}" class="confirm ajax-get">删除</a>
+        </span>
+        <span class="label label-info"><i class="fa fa-cog"></i></span>
+        <span>{$list.title}</span>
+    </div>
+    {notempty name="list['_']"}
+    <ol class="dd-list">
+        {:action('Channel/tree', array($list['_']))}
+    </ol>
+    {/notempty}
+</li>
+{/volist}

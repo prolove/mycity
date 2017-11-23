@@ -1,0 +1,19 @@
+{extend name="public/base"/}
+
+{block name="header"}
+    <li class="active"><a>安装协议<span class="caret"></span></a></li>
+    <li class="active"><a>环境检测<span class="caret"></span></a></li>
+    <li class="active"><a>创建数据<span class="caret"></span></a></li>
+    <li><a>升级<span class="caret"></span></a></li>
+    <li><a>完成<span class="caret"></span></a></li>
+{/block}
+
+{block name="body"}
+    <h1>升级</h1>
+    <p>检测到已经安装过系统，点击下一步开始进行系统升级！</p>
+{/block}
+
+{block name="footer"}
+    <a class="btn btn-success btn-large" href="{:url('Install/step1')}">上一步</a>
+    <a class="btn btn-primary btn-large" href="{:url('Install/step3')}">下一步</a>
+{/block}

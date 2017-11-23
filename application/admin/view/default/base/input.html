@@ -1,0 +1,126 @@
+<!-- 基础文档模型 -->
+{notempty name="model_info['field_group']"}
+<ul class="nav nav-tabs" role="tablist">
+    {volist name=":parse_config_attr($model_info['field_group'])" id="group"}
+    <li role="presentation" {eq name="key" value="1"}class="active"{/eq}><a href="#FormTable{$key}" aria-controls="FormTable{$key}" role="tab" data-toggle="tab">{$group}</a></li>
+    {/volist}
+</ul>
+{/notempty}
+
+<div class="tab-content">
+    {php}
+    if($model_info['field_group']){
+        $parse_config_attr = parse_config_attr($model_info['field_group']);
+    }else{
+        $parse_config_attr = [1=>1];
+    }
+    {/php}
+    {volist name="parse_config_attr" id="group"}
+    <div id="FormTable{$key}" role="tabpanel" class="tab-pane {eq name="key" value="1"}active{/eq}">
+        <div class="col-xs-12">
+        {volist name="model_info['fields'][$key]" id="field"}
+        {if condition="!isset($field['is_show']) || $field['is_show'] == 1 || $field['is_show'] == 2"}
+
+            <div class="form-group">
+                <label>{$field['title']}<span class="check-tips">{notempty name="field['remark']"}（{$field['remark']}）{/notempty}</span></label>
+                <div class="controls layui-form">
+                    {switch name="field.type"}
+                    {case value="num"}
+                        <input type="text" class="form-control" name="{$field.name}" value="{$data[$field['name']]|default=''}">
+                    {/case}
+                    {case value="string"}
+                        <input type="text" class="form-control" name="{$field.name}" value="{$data[$field['name']]|default=''}">
+                    {/case}
+                    {case value="textarea"}
+                        <textarea class="form-control" name="{$field.name}">{$data[$field['name']]|default=''}</textarea>
+                    {/case}
+                    {case value="date"}
+                        <input type="text" name="{$field.name}" class="form-control date" value="{$data[$field['name']]|strtotime|date='Y-m-d',###}" placeholder="请选择日期" />
+                    {/case}
+                    {case value="datetime"}
+                        <input type="text" name="{$field.name}" class="form-control time" value="{$data[$field['name']]|strtotime|time_format}" placeholder="请选择时间" />
+                    {/case}
+                    {case value="bool"}
+                    <select class="form-control" name="{$field.name}">
+                        {volist name=":parse_field_attr($field['extra'])" id="vo"}
+                        <option value="{$key}" {eq name="data[$field['name']]" value="$key"}selected{/eq}>{$vo}</option>
+                        {/volist}
+                    </select>
+                    {/case}
+                    {case value="select"}
+                    <select class="form-control" name="{$field.name}">
+                        {volist name=":parse_field_attr($field['extra'])" id="vo"}
+                        <option value="{$key}" {eq name="data[$field['name']]" value="$key"}selected{/eq}>{$vo}</option>
+                        {/volist}
+                    </select>
+                    {/case}
+                    {case value="radio"}
+                    {volist name=":parse_field_attr($field['extra'])" id="vo"}
+                    <label>
+                        <input type="radio" title="{$vo}" value="{$key}" {eq name="data[$field['name']]" value="$key"}checked="checked"{/eq} name="{$field.name}">
+                    </label>
+                    {/volist}
+                    {/case}
+                    {case value="checkbox"}
+                    <?php
+                        if(is_array($data[$field['name']])){
+                            $data[$field['name']] = array_flip($data[$field['name']]);
+                        }
+                    ?>
+                    {volist name=":parse_field_attr($field['extra'])" id="vo"}
+                        <input type="checkbox" title="{$vo}" value="{$key}" name="{$field.name}[]" {php}if(isset($data[$field['name']][$key])){ echo 'checked="checked"'; };{/php} >
+                    {/volist}
+                    {/case}
+                    {case value="disabled"}
+                    <input type="text" disabled="disabled" class="text form-control" name="{$field.name}" value="{:parse_field_attr($field['extra'],$data,$data[$field['name']])}">
+                    {/case}
+                    {case value="editor"}
+                        <label class="textarea">
+                                <textarea name="{$field.name}">{$data[$field['name']]}</textarea>
+                                {:hook('adminArticleEdit', array('name'=>$field['name'],'value'=>$data[$field['name']]))}
+                        </label>
+                    {/case}
+                    {case value="widget"}
+                    {php}
+                    $hook_arr = parse_function_attr($field['extra'],$data);
+                    {/php}
+                    {:widget($hook_arr['name'],[$hook_arr['parameter']])}
+                    {/case}
+                    {case value="function"}
+                    {php}
+                    $new_data = empty($data[$field['name']])?false:$data;
+                    $new_value = empty($data[$field['value']])?'':$data[$field['value']];
+                    echo parse_field_attr($field['extra'],$new_data,$new_value);
+                    {/php}
+                    {/case}
+                    {case value="hook"}
+                    {php}
+                    $hook_arr = parse_function_attr($field['extra'],$data[$field['name']]);
+                    {/php}
+                    {:hook($hook_arr['name'],$hook_arr['parameter'])}
+                    {/case}
+                    {case value="picture"}
+                    {:hook('webuploader',['name'=>$field['name'],'value'=>$data[$field['name']],'type'=>'docunment'])}
+                    {/case}
+                    {case value="file"}
+                    {:hook('webuploader',['name'=>$field['name'],'value'=>$data[$field['name']],'type'=>'download'])}
+                    {/case}
+                    {default/}
+                    <input type="text" class="text input-large" name="{$field.name}" value="{$field.value|default=''}">
+                    {/switch}
+                </div>
+            </div>
+        {elseif condition="$field['is_show'] == 3 || $field['is_show'] == 4 || $field['is_show'] == 6"/}
+            <?php
+                if(isset($field['extra']) && !empty($field['extra']) && empty($data[$field['name']])){
+                    $data[$field['name']] = parse_field_attr($field['extra']);
+                }
+            ?>
+            <!--隐藏表单-->
+            <input type="hidden" class="text input-large" name="{$field.name}" value="{$data[$field['name']]|default=''}">
+        {/if}
+        {/volist}
+        </div>
+    </div>
+    {/volist}
+</div>

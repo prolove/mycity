@@ -1,0 +1,39 @@
+{extend name="public/base" /}
+{block name="content-header"}
+<h5><i class="fa fa-fw fa-connectdevelop"></i> {$Two_assign.operate}分类</h5>
+</block>
+{block name="body"}
+<div class="row">
+	<div class="col-xs-12">
+		<div class="tab-wrap">
+			<div class="tab-content">
+				<form action="{:url($Two_assign.type)}" method="post" class="form-horizontal">
+					<div id="tab1" class="tab-pane in tab1">
+						<div class="form-group">
+							<label class="item-label">目标分类<span class="check-tips">（将{$Two_assign.operate}至的分类）</span></label>
+							<div class="controls">
+								<select name="to" class="form-control">
+									{volist name="list" id="vo"}
+										<option value="{$vo.id}">{$vo.title}</option>
+									{/volist}
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<div class="btn-submit-group">
+						<input type="hidden" name="from" value="{$Two_assign.from}">
+						<button type="submit" id="submit" class="btn btn-danger submit-btn ajax-post" target-form="form-horizontal">确 定</button>
+						<button class="btn btn-success btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script>
+    highlight_subnav('{:url("index")}');
+</script>
+{/block}
