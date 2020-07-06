@@ -22,3 +22,5 @@ require __DIR__ . '/thinkphp/start.php';
 test
 
 test
+
+test
